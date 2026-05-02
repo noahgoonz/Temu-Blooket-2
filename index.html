@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokenQuest</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-card">
+        <div class="brand-icon">🎒</div>
+        <div>
+          <h1>TokenQuest</h1>
+          <p>Answer questions, earn tokens, open packs, collect blooks.</p>
+        </div>
+      </div>
+
+      <div class="token-box">
+        <span>🪙 Tokens</span>
+        <strong id="tokenCount">0</strong>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="play">Play</button>
+      <button class="tab" data-tab="packs">Packs</button>
+      <button class="tab" data-tab="inventory">Inventory</button>
+      <button class="tab" data-tab="bazaar">Bazaar</button>
+      <button class="tab" data-tab="backgrounds">Backgrounds</button>
+      <button class="tab" data-tab="trading">Trading</button>
+      <button class="tab" data-tab="admin">Admin</button>
+    </nav>
+
+    <section id="play" class="page active">
+      <div class="mode-buttons">
+        <button id="easyModeBtn" class="mode-btn active">
+          Easy Questions<br>
+          <span>5–10 tokens</span>
+        </button>
+
+        <button id="hardModeBtn" class="mode-btn">
+          Hard Questions<br>
+          <span>30–50 tokens</span>
+        </button>
+
+        <button id="biologyModeBtn" class="mode-btn biology-mode">
+          Biology Questions<br>
+          <span>75–100 tokens</span>
+        </button>
+      </div>
+
+      <div class="card question-card">
+        <h2 id="questionModeLabel">Easy Mode</h2>
+        <h3 id="questionText">Question goes here</h3>
+        <div id="answers" class="answers"></div>
+        <p id="resultText" class="result"></p>
+      </div>
+    </section>
+
+    <section id="packs" class="page">
+      <h2 class="section-title">Packs</h2>
+      <p class="small">You can open 1–100 packs at once.</p>
+      <div id="packGrid" class="pack-grid"></div>
+
+      <div class="archived-section">
+        <h2 class="section-title archived-title">Archived</h2>
+        <p class="small">Archived packs are no longer purchasable, but they still show their contents.</p>
+        <div id="archivedPackGrid" class="pack-grid"></div>
+      </div>
+    </section>
+
+    <section id="inventory" class="page">
+      <div class="inventory-header">
+        <h2 class="section-title">Your Blooks</h2>
+
+        <div class="inventory-controls">
+          <div class="inventory-tabs">
+            <button id="normalInventoryBtn" class="inventory-tab active">Normal</button>
+            <button id="limitedInventoryBtn" class="inventory-tab">Limited</button>
+          </div>
+
+          <select id="inventorySort">
+            <option value="rarityHigh">Rarity: High to Low</option>
+            <option value="rarityLow">Rarity: Low to High</option>
+            <option value="countHigh">Owned: High to Low</option>
+            <option value="countLow">Owned: Low to High</option>
+            <option value="sellHigh">Sell: High to Low</option>
+            <option value="sellLow">Sell: Low to High</option>
+            <option value="nameAZ">Name: A-Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="inventoryGrid" class="inventory-grid"></div>
+    </section>
+
+    <section id="bazaar" class="page">
+      <div class="bazaar-header">
+        <div>
+          <h2 class="section-title">The Bazaar</h2>
+          <p class="small">Buy blooks from random sellers. Sort by rarity or refresh the listings.</p>
+        </div>
+
+        <div class="bazaar-controls">
+          <select id="bazaarSort">
+            <option value="default">Sort: Default</option>
+            <option value="rarityHigh">Rarity: High to Low</option>
+            <option value="rarityLow">Rarity: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+            <option value="priceLow">Price: Low to High</option>
+          </select>
+
+          <button id="refreshBazaarBtn" class="refresh-bazaar-btn">Refresh Bazaar</button>
+        </div>
+      </div>
+
+      <div id="bazaarGrid" class="bazaar-grid"></div>
+    </section>
+
+    <section id="backgrounds" class="page">
+      <h2 class="section-title">Background Shop</h2>
+      <p class="small">Spend tokens on backgrounds and equip your favorite one.</p>
+      <div id="backgroundGrid" class="background-grid"></div>
+    </section>
+
+    <section id="trading" class="page">
+      <div class="card trade-card">
+        <h2>Bot Trading</h2>
+        <p class="small">Pick one of your tradable blooks. The bot can offer one of the same rarity, or two of one lower rarity.</p>
+
+        <div class="admin-row">
+          <select id="tradeYourBlook"></select>
+          <button id="makeTradeBtn">Get Bot Offer</button>
+        </div>
+
+        <div id="tradeOffer" class="trade-offer hidden"></div>
+      </div>
+    </section>
+
+    <section id="admin" class="page">
+      <div class="card admin-card">
+        <h2>Admin Panel</h2>
+        <p class="small">Use this for testing. You can add tokens, set tokens, or give blooks.</p>
+
+        <div class="admin-row">
+          <input id="adminTokens" type="number" placeholder="Token amount" />
+          <button id="giveTokensBtn">Add Tokens</button>
+          <button id="setTokensBtn">Set Tokens</button>
+        </div>
+
+        <div class="admin-row">
+          <select id="adminBlookSelect"></select>
+          <button id="giveBlookBtn">Give Blook</button>
+        </div>
+
+        <div class="admin-row">
+          <button id="unlockAllBtn" class="danger">Unlock All Blooks</button>
+          <button id="resetBtn" class="danger">Reset Save</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="unboxModal" class="modal hidden">
+    <div class="modal-card">
+      <div id="packShake" class="pack-shake">🎁</div>
+      <h2 id="unboxName">Opening...</h2>
+      <p id="unboxRarity"></p>
+      <div id="unboxList" class="unbox-list"></div>
+      <button id="closeModalBtn">Nice!</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
