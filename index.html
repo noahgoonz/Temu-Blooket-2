@@ -30,7 +30,6 @@
       <button class="tab" data-tab="bazaar">Bazaar</button>
       <button class="tab" data-tab="backgrounds">Backgrounds</button>
       <button class="tab" data-tab="trading">Trading</button>
-      <button class="tab" data-tab="admin">Admin</button>
     </nav>
 
     <section id="play" class="page active">
@@ -49,6 +48,15 @@
           Biology Questions<br>
           <span>75–100 tokens</span>
         </button>
+      </div>
+
+      <div class="token-upgrade-card">
+        <div>
+          <h3>⏫ Permanent Token Boost</h3>
+          <p>Buy once to permanently earn 2x tokens from questions.</p>
+        </div>
+
+        <button id="tokenMultiplierBtn">Buy 2x Tokens</button>
       </div>
 
       <div class="card question-card">
@@ -139,10 +147,10 @@
       </div>
     </section>
 
-    <section id="admin" class="page">
+    <section id="admin" class="page admin-secret">
       <div class="card admin-card">
         <h2>Admin Panel</h2>
-        <p class="small">Use this for testing. You can add tokens, set tokens, or give blooks.</p>
+        <p class="small">Hidden testing tools. Press <strong>\</strong> to open or close this panel.</p>
 
         <div class="admin-row">
           <input id="adminTokens" type="number" placeholder="Token amount" />
@@ -153,6 +161,17 @@
         <div class="admin-row">
           <select id="adminBlookSelect"></select>
           <button id="giveBlookBtn">Give Blook</button>
+        </div>
+
+        <div class="admin-divider"></div>
+
+        <h3 class="admin-subtitle">Archived Packs</h3>
+        <p class="small">Open archived packs here without making them public in the Packs tab.</p>
+
+        <div class="admin-row">
+          <select id="adminArchivedPackSelect"></select>
+          <input id="adminArchivedPackQty" type="number" min="1" max="100" value="1" />
+          <button id="openAdminArchivedPackBtn">Open Archived Pack</button>
         </div>
 
         <div class="admin-row">
