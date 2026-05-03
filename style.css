@@ -117,7 +117,7 @@ body.bg-summer {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
   margin-bottom: 24px;
 }
@@ -151,6 +151,14 @@ body.bg-summer {
 
 .page.active {
   display: block;
+}
+
+.admin-secret {
+  display: none !important;
+}
+
+body.admin-unlocked .admin-secret.active {
+  display: block !important;
 }
 
 .card {
@@ -203,6 +211,56 @@ body.bg-summer {
 
 .biology-mode.active {
   background: #22c55e;
+}
+
+.token-upgrade-card {
+  max-width: 760px;
+  margin: 12px auto 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 2px solid rgba(147, 51, 234, 0.18);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.token-upgrade-card h3 {
+  color: #6d28d9;
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.token-upgrade-card p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+#tokenMultiplierBtn {
+  border: none;
+  border-radius: 16px;
+  padding: 14px 20px;
+  background: #9333ea;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.15s;
+  min-width: 190px;
+}
+
+#tokenMultiplierBtn:hover {
+  background: #7e22ce;
+  transform: scale(1.03);
+}
+
+#tokenMultiplierBtn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .question-card {
@@ -413,7 +471,9 @@ body.bg-summer {
 .pack-card button,
 .sell-btn,
 .buy-btn,
-.background-btn {
+.background-btn,
+.admin-row button,
+.trade-buttons button {
   margin-top: 12px;
   width: 100%;
   padding: 13px;
@@ -430,7 +490,9 @@ body.bg-summer {
 .pack-card button:hover,
 .sell-btn:hover,
 .buy-btn:hover,
-.background-btn:hover {
+.background-btn:hover,
+.admin-row button:hover,
+.trade-buttons button:hover {
   background: #0f766e;
   transform: scale(1.03);
 }
@@ -530,8 +592,7 @@ body.bg-summer {
   font-size: 13px;
 }
 
-.blook-card.legendary-card,
-.bazaar-card.legendary-card {
+.legendary-card {
   border: 3px solid #facc15;
   box-shadow:
     0 0 12px rgba(250, 204, 21, 0.75),
@@ -539,8 +600,7 @@ body.bg-summer {
     0 15px 30px rgba(15, 23, 42, 0.12);
 }
 
-.blook-card.mythic-card,
-.bazaar-card.mythic-card {
+.mythic-card {
   border: 4px solid transparent;
   background:
     linear-gradient(white, white) padding-box,
@@ -551,8 +611,7 @@ body.bg-summer {
     0 15px 30px rgba(15, 23, 42, 0.12);
 }
 
-.blook-card.limited-chroma-card,
-.bazaar-card.limited-chroma-card {
+.limited-chroma-card {
   border: 4px solid transparent;
   background:
     linear-gradient(white, white) padding-box,
@@ -564,8 +623,7 @@ body.bg-summer {
   animation: limitedChromaGlow 2s linear infinite;
 }
 
-.blook-card.mystical-card,
-.bazaar-card.mystical-card {
+.mystical-card {
   border: 4px solid #8b5cf6;
   box-shadow:
     0 0 0 4px rgba(139, 92, 246, 0.16),
@@ -576,8 +634,7 @@ body.bg-summer {
     rgba(255, 255, 255, 0.95);
 }
 
-.blook-card.limited-card,
-.bazaar-card.limited-card {
+.limited-card {
   border: 4px solid #f472b6;
   box-shadow:
     0 0 0 4px rgba(244, 114, 182, 0.12),
@@ -602,7 +659,6 @@ body.bg-summer {
   background: #9ca3af;
 }
 
-.pack-card.aquatic-banner-pack,
 .pack-card.forest-mystical-pack,
 .pack-card.sky-mystical-pack {
   border: 4px solid #8b5cf6;
@@ -684,7 +740,9 @@ body.bg-summer {
 }
 
 #inventorySort,
-#bazaarSort {
+#bazaarSort,
+.admin-row select,
+.admin-row input {
   padding: 12px;
   border-radius: 14px;
   border: 2px solid #cbd5e1;
@@ -768,209 +826,195 @@ body.bg-summer {
 }
 
 .admin-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  margin: 12px 0;
+  align-items: center;
 }
 
-.admin-row input,
-.admin-row select {
-  flex: 1;
-  padding: 14px;
-  border-radius: 14px;
-  border: 2px solid #cbd5e1;
-  font-size: 16px;
+.admin-divider {
+  height: 2px;
+  background: rgba(100, 116, 139, 0.18);
+  border-radius: 999px;
+  margin: 22px 0;
+}
+
+.admin-subtitle {
+  font-size: 22px;
+  color: #1e3a8a;
+  margin-bottom: 6px;
+}
+
+#adminArchivedPackQty {
+  max-width: 130px;
+}
+
+.danger {
+  background: #dc2626 !important;
+}
+
+.danger:hover {
+  background: #991b1b !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 20;
+}
+
+.modal-card {
+  width: min(620px, 95%);
   background: white;
+  border-radius: 30px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.35);
 }
 
-.admin-row button {
-  padding: 14px 18px;
+.pack-shake {
+  font-size: 88px;
+  animation: shake 0.55s infinite;
+}
+
+.unbox-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.unbox-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.unbox-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.unbox-icon {
+  font-size: 34px;
+}
+
+#closeModalBtn {
+  margin-top: 22px;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
+  padding: 14px 26px;
   background: #2563eb;
   color: white;
   font-weight: bold;
   cursor: pointer;
 }
 
-.admin-row .danger {
-  background: #dc2626;
-}
-
 .trade-offer {
-  margin-top: 20px;
-  background: #f8fafc;
+  margin-top: 22px;
+  background: rgba(241, 245, 249, 0.9);
   border-radius: 20px;
-  padding: 20px;
-  border: 2px solid #e2e8f0;
+  padding: 18px;
 }
 
 .trade-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-bottom: 18px;
+  gap: 14px;
 }
 
 .trade-mini-card {
   background: white;
   border-radius: 18px;
-  padding: 18px;
+  padding: 16px;
   text-align: center;
-  border: 2px solid #e2e8f0;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
   margin-bottom: 12px;
 }
 
 .trade-mini-card .icon {
-  font-size: 52px;
+  font-size: 58px;
 }
 
 .trade-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.trade-buttons button {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 14px;
-  font-weight: bold;
-  cursor: pointer;
+.trade-buttons .accept {
+  background: #16a34a;
 }
 
-.accept {
-  background: #22c55e;
-  color: white;
-}
-
-.decline {
-  background: #ef4444;
-  color: white;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  display: grid;
-  place-items: center;
-  z-index: 10;
-}
-
-.hidden {
-  display: none;
-}
-
-.modal-card {
-  width: min(520px, 92%);
-  background: white;
-  color: #111827;
-  border-radius: 30px;
-  padding: 34px;
-  text-align: center;
-  box-shadow: 0 25px 70px rgba(0,0,0,0.25);
-}
-
-.pack-shake {
-  font-size: 88px;
-  margin-bottom: 14px;
-  animation: shake 0.5s ease-in-out infinite;
-}
-
-.reveal {
-  animation: pop 0.45s ease-out forwards;
-}
-
-#unboxName {
-  font-size: 30px;
-}
-
-#unboxRarity {
-  font-size: 18px;
-  margin: 12px 0 20px;
-  font-weight: bold;
-}
-
-.unbox-list {
-  max-height: 230px;
-  overflow-y: auto;
-  margin: 12px 0 18px;
-  display: grid;
-  gap: 8px;
-}
-
-.unbox-list-item {
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 10px;
-  font-weight: bold;
-}
-
-#closeModalBtn {
-  padding: 13px 30px;
-  border: none;
-  border-radius: 14px;
-  background: #22c55e;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 17px;
+.trade-buttons .decline {
+  background: #dc2626;
 }
 
 @keyframes shake {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(8deg) scale(1.05); }
-  50% { transform: rotate(0deg) scale(1); }
-  75% { transform: rotate(-8deg) scale(1.05); }
-  100% { transform: rotate(0deg) scale(1); }
-}
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
 
-@keyframes pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  70% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  25% {
+    transform: rotate(-6deg) scale(1.04);
+  }
+
+  75% {
+    transform: rotate(6deg) scale(1.04);
+  }
 }
 
 @keyframes limitedChromaGlow {
-  0% {
-    box-shadow:
-      0 0 16px rgba(236, 72, 153, 0.55),
-      0 0 34px rgba(249, 168, 212, 0.45),
-      0 15px 30px rgba(15, 23, 42, 0.12);
+  0%, 100% {
+    filter: brightness(1);
   }
+
   50% {
-    box-shadow:
-      0 0 20px rgba(255, 255, 255, 0.8),
-      0 0 42px rgba(236, 72, 153, 0.58),
-      0 15px 30px rgba(15, 23, 42, 0.12);
-  }
-  100% {
-    box-shadow:
-      0 0 16px rgba(236, 72, 153, 0.55),
-      0 0 34px rgba(249, 168, 212, 0.45),
-      0 15px 30px rgba(15, 23, 42, 0.12);
+    filter: brightness(1.12);
   }
 }
 
-@media (max-width: 900px) {
-  .topbar {
+@media (max-width: 850px) {
+  .topbar,
+  .inventory-header,
+  .bazaar-header {
     flex-direction: column;
-    text-align: center;
-  }
-
-  .brand-card {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .token-box {
-    width: 100%;
+    align-items: stretch;
   }
 
   .tabs {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mode-buttons,
+  .answers,
+  .trade-columns,
+  .trade-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .token-upgrade-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #tokenMultiplierBtn {
+    width: 100%;
   }
 
   .pack-banner {
@@ -982,26 +1026,7 @@ body.bg-summer {
     margin: 0 auto;
   }
 
-  .pack-emoji-row {
-    justify-content: center;
-  }
-
-  .inventory-header,
-  .inventory-controls,
-  .bazaar-header,
-  .bazaar-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .answers,
-  .mode-buttons,
-  .trade-columns {
+  .admin-row {
     grid-template-columns: 1fr;
-  }
-
-  .admin-row,
-  .trade-buttons {
-    flex-direction: column;
   }
 }
