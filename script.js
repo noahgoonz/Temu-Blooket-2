@@ -10,6 +10,9 @@ let ownedBackgrounds = JSON.parse(localStorage.getItem("ownedBackgrounds")) || [
 let equippedBackground = localStorage.getItem("equippedBackground") || "default";
 let limitedChromaStartDate = localStorage.getItem("limitedChromaStartDate") || new Date().toISOString().slice(0, 10);
 let limitedChromaDailyRates = JSON.parse(localStorage.getItem("limitedChromaDailyRates")) || {};
+let tokenMultiplierBought = JSON.parse(localStorage.getItem("tokenMultiplierBought")) || false;
+
+const TOKEN_MULTIPLIER_COST = 5000;
 
 localStorage.setItem("limitedChromaStartDate", limitedChromaStartDate);
 
@@ -23,10 +26,12 @@ function saveGame() {
   localStorage.setItem("equippedBackground", equippedBackground);
   localStorage.setItem("limitedChromaStartDate", limitedChromaStartDate);
   localStorage.setItem("limitedChromaDailyRates", JSON.stringify(limitedChromaDailyRates));
+  localStorage.setItem("tokenMultiplierBought", JSON.stringify(tokenMultiplierBought));
 }
 
 function updateTokens() {
   document.getElementById("tokenCount").textContent = Math.floor(tokens).toLocaleString();
+  renderTokenMultiplierUpgrade();
 }
 
 function daysSince(dateString) {
@@ -139,8 +144,18 @@ function checkAnswer(answer) {
     if (currentMode === "hard") earned = randomNumber(30, 50);
     if (currentMode === "biology") earned = randomNumber(75, 100);
 
+    if (tokenMultiplierBought) {
+      earned *= 2;
+    }
+
     tokens += earned;
-    resultText.textContent = `Correct! You earned ${earned} tokens.`;
+
+    if (tokenMultiplierBought) {
+      resultText.textContent = `Correct! 2x boost active — you earned ${earned} tokens.`;
+    } else {
+      resultText.textContent = `Correct! You earned ${earned} tokens.`;
+    }
+
     resultText.classList.add("correct");
 
     saveGame();
@@ -166,6 +181,50 @@ function setQuestionMode(mode) {
 
   loadQuestion();
 }
+
+function renderTokenMultiplierUpgrade() {
+  const button = document.getElementById("tokenMultiplierBtn");
+
+  if (!button) return;
+
+  if (tokenMultiplierBought) {
+    button.textContent = "2x Tokens Active";
+    button.disabled = true;
+    return;
+  }
+
+  button.textContent = `Buy 2x Tokens — ${TOKEN_MULTIPLIER_COST.toLocaleString()}`;
+
+  if (tokens < TOKEN_MULTIPLIER_COST) {
+    button.disabled = true;
+  } else {
+    button.disabled = false;
+  }
+}
+
+document.getElementById("tokenMultiplierBtn").onclick = () => {
+  if (tokenMultiplierBought) return;
+
+  if (tokens < TOKEN_MULTIPLIER_COST) {
+    alert(`You need ${TOKEN_MULTIPLIER_COST.toLocaleString()} tokens to buy the 2x boost.`);
+    return;
+  }
+
+  const confirmBuy = confirm(`Buy permanent 2x token intake for ${TOKEN_MULTIPLIER_COST.toLocaleString()} tokens?`);
+
+  if (!confirmBuy) return;
+
+  tokens -= TOKEN_MULTIPLIER_COST;
+  tokenMultiplierBought = true;
+
+  saveGame();
+  updateTokens();
+  renderPacks();
+  renderBazaar();
+  renderBackgroundShop();
+
+  alert("Permanent 2x token intake unlocked!");
+};
 
 document.getElementById("easyModeBtn").onclick = () => setQuestionMode("easy");
 document.getElementById("hardModeBtn").onclick = () => setQuestionMode("hard");
@@ -228,6 +287,32 @@ const blooks = [
   { name: "Mystical Jellyfish", icon: "🪼", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Aquatic Pack" },
   { name: "Chubby Bear", icon: "🐻", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Forest Pack" },
   { name: "Vibrant Balloons", icon: "🪂", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Sky Pack" },
+  { name: "Lovely Bouquet", icon: "💐", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Meadow Pack" },
+
+  { name: "Inferno Mask", icon: "🎭", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Mystical Oasis", icon: "🏝️", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Galactic Telescope", icon: "🔭", rarity: "mystical", sell: 8000, tradable: true, exclusivePack: "Space Pack" },
+
+  { name: "Ash Beetle", icon: "🪲", rarity: "common", sell: 16, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Lava Crab", icon: "🦀", rarity: "uncommon", sell: 38, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Ember Rex", icon: "🦖", rarity: "rare", sell: 115, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Obsidian Ape", icon: "🦍", rarity: "epic", sell: 260, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Magma Comet", icon: "☄️", rarity: "legendary", sell: 900, tradable: true, exclusivePack: "Volcano Pack" },
+  { name: "Chroma Ember Eye", icon: "🧿", rarity: "mythic", sell: 3300, tradable: true, exclusivePack: "Volcano Pack" },
+
+  { name: "Dune Camel", icon: "🐫", rarity: "common", sell: 16, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Sand Viper", icon: "🐍", rarity: "uncommon", sell: 38, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Blooming Cactus", icon: "🌵", rarity: "rare", sell: 115, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Mesa Llama", icon: "🦙", rarity: "epic", sell: 260, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Ancient Vase", icon: "🏺", rarity: "legendary", sell: 900, tradable: true, exclusivePack: "Desert Pack" },
+  { name: "Chroma Mirage", icon: "🪞", rarity: "mythic", sell: 3300, tradable: true, exclusivePack: "Desert Pack" },
+
+  { name: "Orbit Satellite", icon: "🛰️", rarity: "common", sell: 16, tradable: true, exclusivePack: "Space Pack" },
+  { name: "Tiny Alien", icon: "👽", rarity: "uncommon", sell: 38, tradable: true, exclusivePack: "Space Pack" },
+  { name: "Cosmic Robot", icon: "🤖", rarity: "rare", sell: 115, tradable: true, exclusivePack: "Space Pack" },
+  { name: "Star Explorer", icon: "🧑‍🚀", rarity: "epic", sell: 260, tradable: true, exclusivePack: "Space Pack" },
+  { name: "Supernova Burst", icon: "💥", rarity: "legendary", sell: 900, tradable: true, exclusivePack: "Space Pack" },
+  { name: "Chroma UFO", icon: "🛸", rarity: "mythic", sell: 3300, tradable: true, exclusivePack: "Space Pack" },
 
   { name: "Limited Egg Chick", icon: "🐣", rarity: "common", sell: 18, tradable: false, limited: true, exclusivePack: "Easter Blossom Pack" },
   { name: "Limited Hatching Egg", icon: "🥚", rarity: "common", sell: 18, tradable: false, limited: true, exclusivePack: "Easter Blossom Pack" },
@@ -319,9 +404,10 @@ const packs = [
     name: "Meadow Pack",
     icon: "🍀",
     price: 200,
-    odds: STANDARD_ODDS,
-    description: "A soft meadow pack with lucky and peaceful blooks.",
-    emojis: ["🦔", "🐸", "🦎", "🦄", "🐺", "🍄"]
+    odds: MYSTICAL_ODDS,
+    mystical: true,
+    description: "A soft meadow pack with lucky blooks, peaceful creatures, chromas, and the ultra-rare Mystical Lovely Bouquet.",
+    emojis: ["🦔", "🐸", "🦎", "🦄", "🐺", "🍄", "💐"]
   },
   {
     name: "Twilight Pack",
@@ -356,6 +442,33 @@ const packs = [
     emojis: ["🐺", "🦇", "☀️", "🌙", "🌌", "📖", "🧪"]
   },
   {
+    name: "Volcano Pack",
+    icon: "🌋",
+    price: 250,
+    odds: MYSTICAL_ODDS,
+    mystical: true,
+    description: "A fiery pack with lava creatures, chromas, and the ultra-rare Mystical Inferno Mask.",
+    emojis: ["🪲", "🦀", "🦖", "🦍", "☄️", "🧿", "🎭"]
+  },
+  {
+    name: "Desert Pack",
+    icon: "🏜️",
+    price: 250,
+    odds: MYSTICAL_ODDS,
+    mystical: true,
+    description: "A sandy desert pack with ancient treasures, chromas, and the ultra-rare Mystical Oasis.",
+    emojis: ["🐫", "🐍", "🌵", "🦙", "🏺", "🪞", "🏝️"]
+  },
+  {
+    name: "Space Pack",
+    icon: "🚀",
+    price: 250,
+    odds: MYSTICAL_ODDS,
+    mystical: true,
+    description: "A cosmic pack with space blooks, chromas, and the ultra-rare Galactic Telescope.",
+    emojis: ["🛰️", "👽", "🤖", "🧑‍🚀", "💥", "🛸", "🔭"]
+  },
+  {
     name: "Easter Blossom Pack",
     icon: "🐰",
     price: 350,
@@ -363,7 +476,7 @@ const packs = [
     limited: true,
     archived: true,
     description: "An archived Easter pack with Easter-themed blooks. This pack is no longer purchasable.",
-    emojis: ["🐣", "🥚", "🌷", "🌸", "🐝", "🥕", "🧺", "🍬", "🌼", "🦋", "🐑", "🪽", "💐"]
+    emojis: ["🐣", "🥚", "🌷", "🌸", "🐝", "🥕", "🧺", "🍬", "🌼", "🦋", "🐑", "🪽", "💐", "🐰"]
   }
 ];
 
@@ -775,11 +888,11 @@ function getBazaarPrice(blook) {
   }
 
   if (blook.limited && blook.rarity === "mythic") {
-    return Math.max(25000, sell + randomNumber(22000, 45000));
+    return Math.max(45000, sell * randomNumber(12, 20));
   }
 
   if (blook.rarity === "mythic") {
-    return sell + randomNumber(1000, 2500);
+    return Math.max(18000, sell * randomNumber(7, 12));
   }
 
   const multipliers = {
@@ -795,14 +908,19 @@ function getBazaarPrice(blook) {
   return sell * randomNumber(min, max);
 }
 
+function getBazaarPool() {
+  return blooks.filter(blook => blook.tradable !== false && !blook.limited);
+}
+
 function generateBazaarListings() {
+  const pool = getBazaarPool();
   bazaarListings = [];
 
-  for (let i = 0; i < 14; i++) {
-    const blook = randomFromArray(blooks);
+  for (let i = 0; i < 8; i++) {
+    const blook = randomFromArray(pool);
 
     bazaarListings.push({
-      id: Date.now() + "-" + i + "-" + Math.random(),
+      id: Date.now() + i + randomNumber(1, 99999),
       blookName: blook.name,
       seller: randomSellerName(),
       price: getBazaarPrice(blook)
@@ -812,9 +930,14 @@ function generateBazaarListings() {
   saveGame();
 }
 
-function getBlookByName(name) {
-  return blooks.find(blook => blook.name === name);
-}
+document.getElementById("refreshBazaarBtn").onclick = () => {
+  const confirmRefresh = confirm("Refresh the Bazaar? Current listings will be replaced.");
+
+  if (!confirmRefresh) return;
+
+  generateBazaarListings();
+  renderBazaar();
+};
 
 document.getElementById("bazaarSort").onchange = event => {
   bazaarSortMode = event.target.value;
@@ -822,76 +945,62 @@ document.getElementById("bazaarSort").onchange = event => {
   renderBazaar();
 };
 
-function getSortedBazaarListings() {
-  const listings = [...bazaarListings];
+function sortBazaarListings(listings) {
+  const sorted = [...listings];
 
   if (bazaarSortMode === "rarityHigh") {
-    listings.sort((a, b) => {
-      const aBlook = getBlookByName(a.blookName);
-      const bBlook = getBlookByName(b.blookName);
-      return rarityValue(bBlook.rarity) - rarityValue(aBlook.rarity);
-    });
+    sorted.sort((a, b) => rarityValue(getBlookByName(b.blookName).rarity) - rarityValue(getBlookByName(a.blookName).rarity));
   }
 
   if (bazaarSortMode === "rarityLow") {
-    listings.sort((a, b) => {
-      const aBlook = getBlookByName(a.blookName);
-      const bBlook = getBlookByName(b.blookName);
-      return rarityValue(aBlook.rarity) - rarityValue(bBlook.rarity);
-    });
+    sorted.sort((a, b) => rarityValue(getBlookByName(a.blookName).rarity) - rarityValue(getBlookByName(b.blookName).rarity));
   }
 
   if (bazaarSortMode === "priceHigh") {
-    listings.sort((a, b) => b.price - a.price);
+    sorted.sort((a, b) => b.price - a.price);
   }
 
   if (bazaarSortMode === "priceLow") {
-    listings.sort((a, b) => a.price - b.price);
+    sorted.sort((a, b) => a.price - b.price);
   }
 
-  return listings;
+  return sorted;
 }
 
 function renderBazaar() {
   const bazaarGrid = document.getElementById("bazaarGrid");
-  if (!bazaarGrid) return;
+  bazaarGrid.innerHTML = "";
+
+  document.getElementById("bazaarSort").value = bazaarSortMode;
 
   if (bazaarListings.length === 0) {
     generateBazaarListings();
   }
 
-  document.getElementById("bazaarSort").value = bazaarSortMode;
-
-  bazaarGrid.innerHTML = "";
-
-  const sortedListings = getSortedBazaarListings();
+  const sortedListings = sortBazaarListings(bazaarListings);
 
   sortedListings.forEach(listing => {
     const blook = getBlookByName(listing.blookName);
-
     if (!blook) return;
 
     let specialClass = "";
     if (blook.rarity === "legendary") specialClass = "legendary-card";
     if (blook.rarity === "mythic") specialClass = "mythic-card";
     if (blook.rarity === "mystical") specialClass = "mystical-card";
-    if (blook.limited) specialClass += " limited-card";
-    if (blook.limited && blook.rarity === "mythic") specialClass = "limited-chroma-card";
 
     const card = document.createElement("div");
     card.className = `bazaar-card ${specialClass}`;
 
     card.innerHTML = `
-      <p class="seller-name">Seller: ${listing.seller}</p>
       <div class="bazaar-icon">${blook.icon}</div>
       <h3>${blook.name}</h3>
+      <p class="seller-name">Seller: ${listing.seller}</p>
       <span class="rarity ${blook.rarity}">${rarityName(blook.rarity)}</span>
-      <p class="price-tag">🪙 ${listing.price.toLocaleString()}</p>
+      <p class="price-tag">${listing.price.toLocaleString()} tokens</p>
       <button class="buy-btn" ${tokens < listing.price ? "disabled" : ""}>Buy</button>
     `;
 
-    const buyButton = card.querySelector(".buy-btn");
-    buyButton.onclick = () => buyBazaarListing(listing.id);
+    card.querySelector(".buy-btn").onclick = () => buyBazaarListing(listing.id);
 
     bazaarGrid.appendChild(card);
   });
@@ -902,14 +1011,12 @@ function buyBazaarListing(listingId) {
 
   if (!listing) return;
 
-  const blook = getBlookByName(listing.blookName);
-
-  if (!blook) return;
-
   if (tokens < listing.price) {
     alert("Not enough tokens!");
     return;
   }
+
+  const blook = getBlookByName(listing.blookName);
 
   tokens -= listing.price;
   addBlook(blook);
@@ -922,150 +1029,128 @@ function buyBazaarListing(listingId) {
   renderInventory();
   renderPacks();
   renderBackgroundShop();
-
-  alert(`You bought ${blook.icon} ${blook.name}!`);
 }
 
-document.getElementById("refreshBazaarBtn").onclick = () => {
-  const confirmRefresh = confirm("Refresh the Bazaar? Current listings will disappear.");
-
-  if (!confirmRefresh) return;
-
-  generateBazaarListings();
-  renderBazaar();
-};
+function getBlookByName(name) {
+  return blooks.find(blook => blook.name === name);
+}
 
 function renderBackgroundShop() {
   const backgroundGrid = document.getElementById("backgroundGrid");
   backgroundGrid.innerHTML = "";
 
-  backgrounds.forEach(bg => {
-    const owned = ownedBackgrounds.includes(bg.id);
-    const equipped = equippedBackground === bg.id;
+  backgrounds.forEach(background => {
+    const owned = ownedBackgrounds.includes(background.id);
+    const equipped = equippedBackground === background.id;
 
     const card = document.createElement("div");
     card.className = "background-card";
 
+    let buttonText = "Buy";
+    if (owned) buttonText = "Equip";
+    if (equipped) buttonText = "Equipped";
+
     card.innerHTML = `
-      <div class="background-preview ${bg.preview}"></div>
-      <h3>${bg.name}</h3>
-      <p class="count">${bg.price === 0 ? "Free" : `${bg.price.toLocaleString()} tokens`}</p>
-      <button class="background-btn" ${!owned && tokens < bg.price ? "disabled" : ""}>
-        ${equipped ? "Equipped" : owned ? "Equip" : "Buy"}
-      </button>
+      <div class="background-preview ${background.preview}"></div>
+      <h3>${background.name}</h3>
+      <p class="count">${background.price.toLocaleString()} tokens</p>
+      <button class="background-btn" ${equipped || (!owned && tokens < background.price) ? "disabled" : ""}>${buttonText}</button>
     `;
 
-    const btn = card.querySelector("button");
-
-    btn.onclick = () => {
-      if (equipped) return;
-
-      if (owned) {
-        equippedBackground = bg.id;
-        applyBackground();
-        saveGame();
-        renderBackgroundShop();
-        return;
-      }
-
-      if (tokens < bg.price) {
-        alert("Not enough tokens!");
-        return;
-      }
-
-      tokens -= bg.price;
-      ownedBackgrounds.push(bg.id);
-      equippedBackground = bg.id;
-      applyBackground();
-      saveGame();
-      updateTokens();
-      renderBackgroundShop();
-      renderPacks();
-      renderBazaar();
-    };
+    card.querySelector(".background-btn").onclick = () => buyOrEquipBackground(background.id);
 
     backgroundGrid.appendChild(card);
   });
 }
 
-function applyBackground() {
-  document.body.className = "";
-  document.body.classList.add(`bg-${equippedBackground}`);
+function buyOrEquipBackground(backgroundId) {
+  const background = backgrounds.find(item => item.id === backgroundId);
+
+  if (!background) return;
+
+  if (!ownedBackgrounds.includes(backgroundId)) {
+    if (tokens < background.price) {
+      alert("Not enough tokens!");
+      return;
+    }
+
+    tokens -= background.price;
+    ownedBackgrounds.push(backgroundId);
+  }
+
+  equippedBackground = backgroundId;
+
+  saveGame();
+  applyBackground();
+  updateTokens();
+  renderBackgroundShop();
+  renderPacks();
+  renderBazaar();
 }
 
-function showUnboxing(wonInput) {
-  const wonBlooks = Array.isArray(wonInput) ? wonInput : [wonInput];
+function applyBackground() {
+  const adminIsOpen = document.getElementById("admin")?.classList.contains("active");
+
+  document.body.className = "";
+  document.body.classList.add(`bg-${equippedBackground}`);
+
+  if (adminIsOpen) {
+    document.body.classList.add("admin-unlocked");
+  }
+}
+
+function showUnboxing(wonBlooks) {
   const modal = document.getElementById("unboxModal");
-  const packShake = document.getElementById("packShake");
   const unboxName = document.getElementById("unboxName");
   const unboxRarity = document.getElementById("unboxRarity");
   const unboxList = document.getElementById("unboxList");
 
   modal.classList.remove("hidden");
 
-  packShake.textContent = "🎁";
-  packShake.className = "pack-shake";
-  unboxName.textContent = "Opening...";
-  unboxRarity.textContent = "";
+  if (wonBlooks.length === 1) {
+    const blook = wonBlooks[0];
+    unboxName.textContent = `${blook.icon} ${blook.name}`;
+    unboxRarity.textContent = rarityName(blook.rarity);
+  } else {
+    unboxName.textContent = `Opened ${wonBlooks.length} Packs!`;
+    unboxRarity.textContent = "Here is what you got:";
+  }
+
   unboxList.innerHTML = "";
 
-  setTimeout(() => {
-    const bestBlook = [...wonBlooks].sort((a, b) => rarityValue(b.rarity) - rarityValue(a.rarity))[0];
+  wonBlooks.forEach(blook => {
+    const item = document.createElement("div");
+    item.className = "unbox-item";
 
-    packShake.textContent = bestBlook.icon;
-    packShake.className = "pack-shake reveal";
-
-    if (wonBlooks.length === 1) {
-      unboxName.textContent = bestBlook.name;
-      unboxRarity.textContent = rarityName(bestBlook.rarity);
-      unboxRarity.className = bestBlook.rarity;
-      unboxList.innerHTML = "";
-    } else {
-      const counts = {};
-
-      wonBlooks.forEach(blook => {
-        if (!counts[blook.name]) {
-          counts[blook.name] = {
-            blook,
-            count: 0
-          };
-        }
-
-        counts[blook.name].count++;
-      });
-
-      const results = Object.values(counts).sort((a, b) => rarityValue(b.blook.rarity) - rarityValue(a.blook.rarity));
-
-      unboxName.textContent = `Opened ${wonBlooks.length} Packs`;
-      unboxRarity.textContent = `Best Pull: ${bestBlook.icon} ${bestBlook.name}`;
-      unboxRarity.className = bestBlook.rarity;
-
-      unboxList.innerHTML = results.map(item => `
-        <div class="unbox-list-item">
-          ${item.blook.icon} ${item.blook.name} ×${item.count}
+    item.innerHTML = `
+      <div class="unbox-left">
+        <span class="unbox-icon">${blook.icon}</span>
+        <div>
+          <strong>${blook.name}</strong>
+          <p>${rarityName(blook.rarity)}</p>
         </div>
-      `).join("");
-    }
-  }, 700);
+      </div>
+      <span class="rarity ${blook.rarity}">${rarityName(blook.rarity)}</span>
+    `;
+
+    unboxList.appendChild(item);
+  });
 }
 
 document.getElementById("closeModalBtn").onclick = () => {
   document.getElementById("unboxModal").classList.add("hidden");
-  renderInventory();
 };
-
-function getTradeableInventoryItems() {
-  return Object.values(inventory).filter(blook => blook.tradable !== false);
-}
 
 function getTradeableBlookPool() {
   return blooks.filter(blook => blook.tradable !== false && !blook.limited);
 }
 
+function getTradeableInventoryItems() {
+  return Object.values(inventory).filter(blook => blook.tradable !== false && !blook.limited && blook.count > 0);
+}
+
 function updateTradeDropdown() {
   const tradeSelect = document.getElementById("tradeYourBlook");
-  if (!tradeSelect) return;
-
   tradeSelect.innerHTML = "";
 
   const tradableOwnedBlooks = getTradeableInventoryItems();
@@ -1245,6 +1330,18 @@ function setupAdminPanel() {
     option.textContent = `${blook.icon} ${blook.name} - ${rarityName(blook.rarity)}`;
     select.appendChild(option);
   });
+
+  const archivedPackSelect = document.getElementById("adminArchivedPackSelect");
+  archivedPackSelect.innerHTML = "";
+
+  packs
+    .filter(pack => pack.archived)
+    .forEach(pack => {
+      const option = document.createElement("option");
+      option.value = pack.name;
+      option.textContent = `${pack.icon} ${pack.name}`;
+      archivedPackSelect.appendChild(option);
+    });
 }
 
 document.getElementById("giveTokensBtn").onclick = () => {
@@ -1310,6 +1407,34 @@ document.getElementById("unlockAllBtn").onclick = () => {
   alert("All blooks unlocked!");
 };
 
+function openAdminArchivedPack(pack, quantity = 1) {
+  const wonBlooks = [];
+
+  for (let i = 0; i < quantity; i++) {
+    const wonBlook = getRandomBlookFromPack(pack);
+    addBlook(wonBlook);
+    wonBlooks.push(wonBlook);
+  }
+
+  saveGame();
+  renderInventory();
+  renderBazaar();
+  updateTradeDropdown();
+  showUnboxing(wonBlooks);
+}
+
+document.getElementById("openAdminArchivedPackBtn").onclick = () => {
+  const selectedPackName = document.getElementById("adminArchivedPackSelect").value;
+  const pack = packs.find(item => item.name === selectedPackName);
+  const quantityInput = document.getElementById("adminArchivedPackQty");
+  const quantity = Math.max(1, Math.min(100, Number(quantityInput.value) || 1));
+
+  if (!pack) return;
+
+  quantityInput.value = quantity;
+  openAdminArchivedPack(pack, quantity);
+};
+
 document.getElementById("resetBtn").onclick = () => {
   const confirmReset = confirm("Are you sure you want to reset everything?");
 
@@ -1326,6 +1451,7 @@ document.getElementById("resetBtn").onclick = () => {
   equippedBackground = "default";
   limitedChromaStartDate = new Date().toISOString().slice(0, 10);
   limitedChromaDailyRates = {};
+  tokenMultiplierBought = false;
 
   saveGame();
   applyBackground();
@@ -1356,22 +1482,46 @@ document.getElementById("resetBtn").onclick = () => {
 const tabs = document.querySelectorAll(".tab");
 const pages = document.querySelectorAll(".page");
 
+function openPage(pageId) {
+  tabs.forEach(t => t.classList.remove("active"));
+  pages.forEach(page => page.classList.remove("active"));
+
+  if (pageId !== "admin") {
+    document.body.classList.remove("admin-unlocked");
+  }
+
+  const matchingTab = document.querySelector(`.tab[data-tab="${pageId}"]`);
+
+  if (matchingTab) {
+    matchingTab.classList.add("active");
+  }
+
+  document.getElementById(pageId).classList.add("active");
+
+  if (pageId === "packs") renderPacks();
+  if (pageId === "inventory") renderInventory();
+  if (pageId === "trading") updateTradeDropdown();
+  if (pageId === "bazaar") renderBazaar();
+  if (pageId === "backgrounds") renderBackgroundShop();
+}
+
 tabs.forEach(tab => {
-  tab.onclick = () => {
-    tabs.forEach(t => t.classList.remove("active"));
-    pages.forEach(page => page.classList.remove("active"));
+  tab.onclick = () => openPage(tab.dataset.tab);
+});
 
-    tab.classList.add("active");
+document.addEventListener("keydown", event => {
+  if (event.key !== "\\") return;
 
-    const pageId = tab.dataset.tab;
-    document.getElementById(pageId).classList.add("active");
+  event.preventDefault();
 
-    if (pageId === "packs") renderPacks();
-    if (pageId === "inventory") renderInventory();
-    if (pageId === "trading") updateTradeDropdown();
-    if (pageId === "bazaar") renderBazaar();
-    if (pageId === "backgrounds") renderBackgroundShop();
-  };
+  if (document.body.classList.contains("admin-unlocked")) {
+    document.body.classList.remove("admin-unlocked");
+    openPage("play");
+  } else {
+    document.body.classList.add("admin-unlocked");
+    setupAdminPanel();
+    openPage("admin");
+  }
 });
 
 function randomNumber(min, max) {
@@ -1399,5 +1549,6 @@ renderPacks();
 renderInventory();
 renderBazaar();
 renderBackgroundShop();
+renderTokenMultiplierUpgrade();
 setupAdminPanel();
 updateTradeDropdown();
